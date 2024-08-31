@@ -103,6 +103,7 @@ let currentQuestionIndex = 0;
 let answeredQuestions = new Set();
 let correctAnswersCount = 0;
 let timer;
+let timePerQuestion = 10; // Waktu per soal dalam detik
 
 function startGame() {
     currentQuestionIndex = 0;
@@ -128,6 +129,7 @@ function showQuestion(question) {
 }
 
 function selectAnswer(answer) {
+    clearInterval(timer); // Hentikan timer saat jawaban dipilih
     const correct = answer.correct;
     if (correct) {
         Swal.fire({
@@ -151,6 +153,9 @@ function selectAnswer(answer) {
     // Mark question as answered
     answeredQuestions.add(currentQuestionIndex);
 
+    // Set selected flag on the answer object
+    questions[currentQuestionIndex].answers.forEach(ans => ans.selected = ans === answer);
+
     // Update question numbers
     updateQuestionNumbers();
 
@@ -163,18 +168,40 @@ function nextQuestion() {
     if (currentQuestionIndex < questions.length) {
         showQuestion(questions[currentQuestionIndex]);
         nextButton.classList.add('hide');
+        startTimer();
     } else {
-        clearInterval(timer);
-        const totalQuestions = questions.length;
-        const incorrectAnswersCount = totalQuestions - correctAnswersCount;
-        Swal.fire({
-            title: 'Kuis Selesai!',
-            icon: 'info',
-            text: `Anda telah menyelesaikan kuis. Jawaban Benar: ${correctAnswersCount}, Jawaban Salah: ${incorrectAnswersCount}.`,
-            confirmButtonText: 'Oke'
-        });
-        nextButton.classList.add('hide');
+        showResult();
     }
+}
+
+function showResult() {
+    let resultHTML = `<h2>Quiz Selesai!</h2>
+        <p>Jumlah jawaban benar: ${correctAnswersCount} dari ${questions.length}</p>`;
+
+    resultHTML += '<h3>Rincian Soal:</h3>';
+    questions.forEach((question, index) => {
+        let result = '';
+        if (answeredQuestions.has(index)) {
+            const isCorrect = question.answers.some(answer => answer.correct && answer.selected);
+            const isIncorrect = question.answers.some(answer => !answer.correct && answer.selected);
+            if (isCorrect) {
+                result = 'Benar!';
+            } else if (isIncorrect) {
+                result = 'Salah!';
+            } else {
+                result = 'Tidak Terjawab!';
+            }
+        } else {
+            result = 'Tidak Terjawab!';
+        }
+        resultHTML += `<p>Soal ${index + 1}: ${result}</p>`;
+    });
+
+    resultHTML += '<button class="btn" onclick="startGame()">Mulai Lagi</button>';
+    questionContainer.innerHTML = resultHTML;
+    answerButtons.innerHTML = ''; // Hilangkan pilihan jawaban
+    nextButton.classList.add('hide');
+    stopTimer();
 }
 
 function generateQuestionNumbers() {
@@ -184,12 +211,6 @@ function generateQuestionNumbers() {
         button.innerText = index + 1;
         button.classList.add('btn');
         button.classList.add('inactive');
-        button.addEventListener('click', () => {
-            if (index === currentQuestionIndex) return;
-            currentQuestionIndex = index;
-            showQuestion(questions[currentQuestionIndex]);
-            nextButton.classList.add('hide');
-        });
         questionNumbersContainer.appendChild(button);
     });
 }
@@ -201,9 +222,11 @@ function updateQuestionNumbers() {
             button.classList.remove('inactive');
             button.classList.add('active');
             // Set color based on correctness
-            const isCorrect = questions[index].answers.find(answer => answer.correct && answer.selected) !== undefined;
+            const question = questions[index];
+            const isCorrect = question.answers.some(answer => answer.correct && answer.selected);
+            const isIncorrect = question.answers.some(answer => !answer.correct && answer.selected);
             button.classList.toggle('correct', isCorrect);
-            button.classList.toggle('incorrect', !isCorrect);
+            button.classList.toggle('incorrect', isIncorrect);
         } else {
             button.classList.remove('active', 'correct', 'incorrect');
             button.classList.add('inactive');
@@ -212,26 +235,27 @@ function updateQuestionNumbers() {
 }
 
 function startTimer() {
-    const duration = 10 * 60; // 10 minutes in seconds
-    let timeRemaining = duration;
-
+    let time = timePerQuestion; // Waktu untuk soal saat ini
+    timerDisplay.innerText = `0:${time < 10 ? '0' : ''}${time}`; // Tampilkan waktu awal
     timer = setInterval(() => {
-        const minutes = Math.floor(timeRemaining / 60);
-        const seconds = timeRemaining % 60;
-        timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        timeRemaining--;
-
-        if (timeRemaining < 0) {
+        time--;
+        timerDisplay.innerText = `0:${time < 10 ? '0' : ''}${time}`;
+        if (time <= 0) {
             clearInterval(timer);
             Swal.fire({
                 title: 'Waktu Habis!',
-                icon: 'info',
-                text: 'Waktu pengerjaan telah habis.',
-                confirmButtonText: 'Oke'
+                icon: 'error',
+                timer: 1000,
+                timerProgressBar: true,
+                showConfirmButton: false
             });
-            nextButton.classList.add('hide');
+            nextQuestion();
         }
     }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timer);
 }
 
 startGame();

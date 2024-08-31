@@ -142,6 +142,14 @@ main {
     background: #007bff; /* Color for answered questions */
 }
 
+#question-numbers button.correct {
+    background: #28a745; /* Color for correct answers */
+}
+
+#question-numbers button.incorrect {
+    background: #dc3545; /* Color for incorrect answers */
+}
+
 #question-numbers button:hover {
     background: #0056b3;
 }
