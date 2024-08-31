@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header>
+        <h1>Quiz Game</h1>
+    </header>
+    <main>
+        <div id="quiz-container">
+            <div id="question-container">
+                <div id="current-question">Nomor 1</div>
+                <div id="question"></div>
+                <div id="answer-buttons" class="btn-container"></div>
+                <button id="next-button" class="btn hide">Next</button>
+            </div>
+        </div>
+        <div id="quiz-info">
+            <h2>Jumlah Soal</h2>
+            <div id="question-numbers"></div>
+            <div id="timer">10:00</div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Quiz Game</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
