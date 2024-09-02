@@ -3,9 +3,20 @@ const answerButtons = document.getElementById('answer-buttons');
 const nextButton = document.getElementById('next-button');
 const questionNumbersContainer = document.getElementById('question-numbers');
 const timerDisplay = document.getElementById('timer');
+const timerBar = document.getElementById('timer-bar'); // Tambahkan elemen untuk bar timer
 const currentQuestionDisplay = document.getElementById('current-question');
 
 const questions = [
+    {
+        question: 'Apa nama bangunan di bawah ini?',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Burj_Khalifa_2021.jpg/1200px-Burj_Khalifa_2021.jpg',
+        answers: [
+            { text: 'Burj Khalifa', correct: true },
+            { text: 'Eiffel Tower', correct: false },
+            { text: 'Statue of Liberty', correct: false },
+            { text: 'Sydney Opera House', correct: false }
+        ]
+    },
     {
         question: 'Apa ibu kota Indonesia?',
         answers: [
@@ -24,100 +35,55 @@ const questions = [
             { text: 'Soekarno', correct: true }
         ]
     },
-    {
-        question: 'Apa nama gunung tertinggi di Indonesia?',
-        answers: [
-            { text: 'Gunung Merapi', correct: false },
-            { text: 'Gunung Bromo', correct: false },
-            { text: 'Gunung Rinjani', correct: false },
-            { text: 'Gunung Jaya Wijaya', correct: true }
-        ]
-    },
-    {
-        question: 'Apa nama laut yang terletak di sebelah utara Indonesia?',
-        answers: [
-            { text: 'Laut Jawa', correct: false },
-            { text: 'Laut Arafura', correct: false },
-            { text: 'Laut Maluku', correct: false },
-            { text: 'Laut China Selatan', correct: true }
-        ]
-    },
-    {
-        question: 'Siapa penulis novel “Laskar Pelangi”?',
-        answers: [
-            { text: 'Andrea Hirata', correct: true },
-            { text: 'Pramoedya Ananta Toer', correct: false },
-            { text: 'Ayah', correct: false },
-            { text: 'Seno Gumira Ajidarma', correct: false }
-        ]
-    },
-    {
-        question: 'Apa nama ibu kota provinsi Bali?',
-        answers: [
-            { text: 'Denpasar', correct: true },
-            { text: 'Singaraja', correct: false },
-            { text: 'Ubud', correct: false },
-            { text: 'Kuta', correct: false }
-        ]
-    },
-    {
-        question: 'Siapa penemu lampu pijar?',
-        answers: [
-            { text: 'Nikola Tesla', correct: false },
-            { text: 'Alexander Graham Bell', correct: false },
-            { text: 'Thomas Edison', correct: true },
-            { text: 'Michael Faraday', correct: false }
-        ]
-    },
-    {
-        question: 'Apa nama bandara utama di Jakarta?',
-        answers: [
-            { text: 'Bandara Internasional Soekarno-Hatta', correct: true },
-            { text: 'Bandara Internasional Ngurah Rai', correct: false },
-            { text: 'Bandara Internasional Juanda', correct: false },
-            { text: 'Bandara Internasional Kualanamu', correct: false }
-        ]
-    },
-    {
-        question: 'Apa simbol kimia dari air?',
-        answers: [
-            { text: 'H2O', correct: true },
-            { text: 'CO2', correct: false },
-            { text: 'NaCl', correct: false },
-            { text: 'O2', correct: false }
-        ]
-    },
-    {
-        question: 'Apa nama planet keempat dari Matahari?',
-        answers: [
-            { text: 'Venus', correct: false },
-            { text: 'Mars', correct: true },
-            { text: 'Jupiter', correct: false },
-            { text: 'Saturnus', correct: false }
-        ]
-    }
     // Tambahkan lebih banyak soal jika diperlukan
 ];
 
 let currentQuestionIndex = 0;
+let currentScore = 0;
 let answeredQuestions = new Set();
 let correctAnswersCount = 0;
 let timer;
-let timePerQuestion = 10; // Waktu per soal dalam detik
+let timePerQuestion = 10; // Waktu per soal dalam detik (1 menit)
 
 function startGame() {
-    currentQuestionIndex = 0;
-    answeredQuestions.clear();
-    correctAnswersCount = 0;
-    nextButton.classList.add('hide');
-    showQuestion(questions[currentQuestionIndex]);
-    generateQuestionNumbers();
-    startTimer();
+    Swal.fire({
+        title: 'Mulai Kuis',
+        text: "Apakah Anda siap untuk memulai kuis?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Mulai',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            currentQuestionIndex = 0;
+            answeredQuestions.clear();
+            correctAnswersCount = 0;
+            nextButton.classList.add('hide');
+            showQuestion(questions[currentQuestionIndex]);
+            generateQuestionNumbers();
+            startTimer();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            window.location.href = 'beranda.html';  // Arahkan ke halaman beranda
+        }
+    });
 }
 
 function showQuestion(question) {
     currentQuestionDisplay.innerText = `Soal ${currentQuestionIndex + 1}`;
-    questionContainer.innerText = question.question;
+    questionContainer.innerHTML = ''; // Clear previous content
+
+    const questionText = document.createElement('div');
+    questionText.innerText = question.question;
+    questionContainer.appendChild(questionText);
+
+    // Check if question has an image
+    if (question.image) {
+        const img = document.createElement('img');
+        img.src = question.image;
+        img.alt = 'Soal Gambar';
+        questionContainer.appendChild(img);
+    }
+
     answerButtons.innerHTML = '';
     question.answers.forEach(answer => {
         const button = document.createElement('button');
@@ -131,7 +97,12 @@ function showQuestion(question) {
 function selectAnswer(answer) {
     clearInterval(timer); // Hentikan timer saat jawaban dipilih
     const correct = answer.correct;
+    let points = 0;
+    let message = '';
+
     if (correct) {
+        points = 2000;
+        message = `Jawaban Benar! +${points} Poin`;
         Swal.fire({
             title: 'Benar!',
             icon: 'success',
@@ -141,6 +112,8 @@ function selectAnswer(answer) {
         });
         correctAnswersCount++;
     } else {
+        points = -100;
+        message = `Jawaban Salah! ${points} Poin`;
         Swal.fire({
             title: 'Salah!',
             icon: 'error',
@@ -150,16 +123,13 @@ function selectAnswer(answer) {
         });
     }
 
-    // Mark question as answered
+    currentScore += points; // Update the current score
+    document.getElementById('current-score').innerText = `${currentScore} Poin 🔥`;
+
     answeredQuestions.add(currentQuestionIndex);
-
-    // Set selected flag on the answer object
     questions[currentQuestionIndex].answers.forEach(ans => ans.selected = ans === answer);
-
-    // Update question numbers
     updateQuestionNumbers();
-
-    // Wait for alert to finish, then go to the next question
+    showNotification(message, correct ? 'success' : 'error');
     setTimeout(nextQuestion, 1000);
 }
 
@@ -175,33 +145,39 @@ function nextQuestion() {
 }
 
 function showResult() {
-    let resultHTML = `<h2>Quiz Selesai!</h2>
-        <p>Jumlah jawaban benar: ${correctAnswersCount} dari ${questions.length}</p>`;
+    let unansweredCount = 0;
+    let incorrectAnswersCount = 0;
 
-    resultHTML += '<h3>Rincian Soal:</h3>';
+    // Hitung jumlah soal yang tidak terjawab dan yang salah
     questions.forEach((question, index) => {
-        let result = '';
-        if (answeredQuestions.has(index)) {
-            const isCorrect = question.answers.some(answer => answer.correct && answer.selected);
-            const isIncorrect = question.answers.some(answer => !answer.correct && answer.selected);
-            if (isCorrect) {
-                result = 'Benar!';
-            } else if (isIncorrect) {
-                result = 'Salah!';
-            } else {
-                result = 'Tidak Terjawab!';
-            }
+        if (!answeredQuestions.has(index)) {
+            unansweredCount++;
         } else {
-            result = 'Tidak Terjawab!';
+            const isIncorrect = question.answers.some(answer => !answer.correct && answer.selected);
+            if (isIncorrect) {
+                incorrectAnswersCount++;
+            }
         }
-        resultHTML += `<p>Soal ${index + 1}: ${result}</p>`;
     });
+
+    // Hitung jumlah soal yang benar
+    const correctAnswersCount = questions.length - unansweredCount - incorrectAnswersCount;
+
+    // Tampilkan hasil akhir
+    let resultHTML = `<h2>Quiz Selesai!</h2>
+        <h3>Rincian Hasil:</h3>
+        <p>Jawaban Terjawab: ${correctAnswersCount}</p>
+        <p>Jawaban Salah: ${incorrectAnswersCount}</p>
+        <p>Jawaban Tidak Terjawab: ${unansweredCount}</p>`;
 
     resultHTML += '<button class="btn" onclick="startGame()">Mulai Lagi</button>';
     questionContainer.innerHTML = resultHTML;
     answerButtons.innerHTML = ''; // Hilangkan pilihan jawaban
     nextButton.classList.add('hide');
     stopTimer();
+
+    // Sembunyikan elemen yang menampilkan nomor soal saat quiz selesai
+    currentQuestionDisplay.innerText = '';
 }
 
 function generateQuestionNumbers() {
@@ -221,7 +197,6 @@ function updateQuestionNumbers() {
         if (answeredQuestions.has(index)) {
             button.classList.remove('inactive');
             button.classList.add('active');
-            // Set color based on correctness
             const question = questions[index];
             const isCorrect = question.answers.some(answer => answer.correct && answer.selected);
             const isIncorrect = question.answers.some(answer => !answer.correct && answer.selected);
@@ -236,10 +211,17 @@ function updateQuestionNumbers() {
 
 function startTimer() {
     let time = timePerQuestion; // Waktu untuk soal saat ini
+
+    timerBar.style.width = '100%'; // Mulai dari penuh
     timerDisplay.innerText = `0:${time < 10 ? '0' : ''}${time}`; // Tampilkan waktu awal
+
     timer = setInterval(() => {
         time--;
         timerDisplay.innerText = `0:${time < 10 ? '0' : ''}${time}`;
+
+        const percentage = (time / timePerQuestion) * 100;
+        timerBar.style.width = `${percentage}%`; // Perbarui lebar bar
+
         if (time <= 0) {
             clearInterval(timer);
             Swal.fire({
@@ -256,6 +238,17 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(timer);
+}
+
+const notification = document.getElementById('notification');
+
+function showNotification(message, type) {
+    notification.innerText = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 2000); // Tampilkan notifikasi selama 2 detik
 }
 
 startGame();

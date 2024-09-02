@@ -7,17 +7,37 @@ body {
     color: #333;
 }
 
-header, footer {
+header {
     background-color: #003366;
     color: white;
     text-align: center;
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.navbar-left {
+    position: absolute;
+    left: 20px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 header h1 {
     margin: 0;
     font-size: 2rem;
+}
+
+footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 footer p {
@@ -33,6 +53,23 @@ main {
     padding: 6rem;
     gap: 1rem;
 }
+
+#timer-container {
+    width: 100%;
+    position: relative;
+}
+
+#timer {
+    display: none; /* Sembunyikan elemen timer */
+}
+
+#timer-bar {
+    height: 10px;
+    background-color: #4caf50;
+    width: 100%; /* Mulai dari penuh */
+    transition: width 1s linear; /* Transisi lebar */
+}
+
 
 #quiz-container {
     background: white;
@@ -73,7 +110,7 @@ main {
 
 .btn {
     display: block;
-    margin: 0.5rem 0;
+    margin: 0.2rem 0;
     padding: 0.75rem;
     background-color: #28a745;
     color: white;
@@ -124,7 +161,8 @@ main {
 }
 
 #question-numbers button {
-    background: #007bff; /* Default color for answered questions */
+    background: #007bff;
+    /* Default color for answered questions */
     color: white;
     border: none;
     border-radius: 4px;
@@ -135,28 +173,66 @@ main {
 }
 
 #question-numbers button.inactive {
-    background: #6c757d; /* Color for unanswered questions */
+    background: #6c757d;
+    /* Color for unanswered questions */
 }
 
 #question-numbers button.active {
-    background: #007bff; /* Color for answered questions */
+    background: #007bff;
+    /* Color for answered questions */
 }
 
 #question-numbers button.correct {
-    background: #28a745; /* Color for correct answers */
+    background: #28a745;
+    /* Color for correct answers */
 }
 
 #question-numbers button.incorrect {
-    background: #dc3545; /* Color for incorrect answers */
+    background: #dc3545;
+    /* Color for incorrect answers */
 }
 
 #question-numbers button:hover {
     background: #0056b3;
 }
 
-#timer {
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-top: 1rem;
+/* Styling notifikasi */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.notification.success {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.notification.error {
+    border-color: #dc3545;
     color: #dc3545;
+}
+
+.navbar-left {
+    float: left;
+    font-size: 16px;
+    color: #fff;
+    margin-left: 20px;
+}
+
+#current-score {
+    font-weight: bold;
+}
+
+#question img {
+    max-width: 75%;
+    height: auto;
+    margin-top: 20px;
+    border-radius: 10px;
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,19 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <header>
-        <h1>Client</h1>
+        <div class="navbar-left">
+            <span id="current-score">0 Poin</span>
+        </div>
+        <h1>Pengetahuan Umum</h1>
     </header>
+    <div id="timer-container">
+        <div id="timer"></div>
+        <div id="timer-bar"></div> <!-- Bar untuk timer -->
+    </div>
+    
     <main>
         <div id="quiz-container">
             <div id="question-container">
@@ -23,12 +33,14 @@
         <div id="quiz-info">
             <h2>Jumlah Soal</h2>
             <div id="question-numbers"></div>
-            <div id="timer">10:00</div>
         </div>
     </main>
     <footer>
         <p>&copy; 2024 Quiz Game</p>
     </footer>
+    <!-- Menambahkan elemen timer untuk menampilkan notifikasi -->
+    <div id="notification" class="notification"></div>
     <script src="script.js"></script>
 </body>
+
 </html>
