@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Video Edukasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert CDN -->
+</head>
+
+<body class="bg-gradient-to-b from-gray-50 to-blue-200">
+    <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-8">
+        <div
+            class="bg-gradient-to-r from-blue-400 to-purple-900 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12 mb-8">
+            <h1 class="text-white dark:text-white text-3xl md:text-3xl font-extrabold mb-2">Belajar Sambil Tebak Suara
+            </h1>
+            <p class="text-lg font-normal text-gray-200 dark:text-gray-400 mb-6">Silahkan jalankan video dan jangan
+                diskip, saat video sedang di putar akan ada pertanyaan yang muncul di detik yang berbeda beda. Jawaban
+                benar akan menlanjutkan video dan jika salah maka video akan terjeda</p>
+            <a href="beranda.html"
+                class="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium text-center text-white rounded-lg bg-red-300 hover:bg-red-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900 hover-effect">
+                Kembali ke beranda
+            </a>
+        </div>
+    </div>
+    <div class="flex justify-center items-center" style="margin-bottom: 5%;">
+        <div class="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6">
+            <video id="gameVideo" class="w-full rounded" controls>
+                <source src="coba.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div id="questionContainer" class="mt-4 hidden">
+                <p id="questionText" class="text-lg font-semibold mb-2"></p>
+                <div id="optionsContainer" class="space-y-2"></div>
+                <button onclick="checkAnswer()" class="mt-4 bg-blue-500 text-white p-2 rounded">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="quiz.js"></script>
+</body>
+
+</html>
